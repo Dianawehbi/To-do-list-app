@@ -24,5 +24,5 @@ public class Category {
     private String color;
 
     @Column(name = "active", nullable = false)
-    private Boolean active = true;
+    private int active = 1;
 }

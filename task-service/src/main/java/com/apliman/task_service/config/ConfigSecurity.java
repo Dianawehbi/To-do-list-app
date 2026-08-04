@@ -1,7 +1,10 @@
 package com.apliman.task_service.config;
 
 import java.time.Instant;
+import java.util.Arrays;
+import java.util.List;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
@@ -13,6 +16,9 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.apliman.task_service.DTO.response.ErrorResponseDTO;
 import com.apliman.task_service.exception.ErrorCode;
@@ -27,14 +33,18 @@ import jakarta.servlet.http.HttpServletResponse;
 public class ConfigSecurity {
 
     private static final String[] PUBLIC_PATHS = {
-        "/error"
-        //  no public endpoints 
+        "/error", //  no public endpoints 
     };
 
     private final TokenIntrospectionFilter tokenIntrospectionFilter;
+    private final List<String> allowedOrigins;
 
-    public ConfigSecurity(TokenIntrospectionFilter tokenIntrospectionFilter) {
+    public ConfigSecurity(
+            TokenIntrospectionFilter tokenIntrospectionFilter,
+            @Value("${task.security.allowed-origins}") String allowedOrigins) {
         this.tokenIntrospectionFilter = tokenIntrospectionFilter;
+        this.allowedOrigins = Arrays.asList(allowedOrigins.split("\\s*,\\s*"));
+
     }
 
     @Bean
@@ -44,11 +54,11 @@ public class ConfigSecurity {
                 .cors(Customizer.withDefaults())
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(PUBLIC_PATHS).permitAll()
-                        .anyRequest().authenticated())
+                .requestMatchers(PUBLIC_PATHS).permitAll()
+                .anyRequest().authenticated())
                 .exceptionHandling(ex -> ex
-                        .authenticationEntryPoint(unauthorizedEntryPoint(new ObjectMapper()))
-                        .accessDeniedHandler(accessDeniedHandler(new ObjectMapper())))
+                .authenticationEntryPoint(unauthorizedEntryPoint(new ObjectMapper()))
+                .accessDeniedHandler(accessDeniedHandler(new ObjectMapper())))
                 .addFilterBefore(tokenIntrospectionFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
@@ -68,6 +78,21 @@ public class ConfigSecurity {
             response.setContentType(MediaType.APPLICATION_JSON_VALUE);
             mapper.writeValue(response.getOutputStream(), body);
         };
+    }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        var config = new CorsConfiguration();
+        config.setAllowedOrigins(allowedOrigins);
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
+        config.setAllowedHeaders(List.of("Authorization", "Content-Type", "X-Internal-Key"));
+        // Bearer tokens travel in the Authorization header, not cookies, so credentials
+        // stay off — which is also what lets allowedOrigins stay explicit rather than "*".
+        config.setAllowCredentials(false);
+        config.setMaxAge(3600L);
+        var source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
+        return source;
     }
 
     private org.springframework.security.web.access.AccessDeniedHandler accessDeniedHandler(ObjectMapper mapper) {

@@ -70,7 +70,7 @@ public class TokenIntrospectionFilter extends OncePerRequestFilter {
             if (result != null && result.isActive()) {
                 var authorities = List.of(new SimpleGrantedAuthority("ROLE_" + result.getRole()));
                 var authentication = new UsernamePasswordAuthenticationToken(
-                        result.getUsername(), null, authorities);
+                        result, null, authorities);
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
