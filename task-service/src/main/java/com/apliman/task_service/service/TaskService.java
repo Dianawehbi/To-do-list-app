@@ -15,10 +15,12 @@ import org.springframework.stereotype.Service;
 import com.apliman.task_service.DTO.request.TaskRequestDTO;
 import com.apliman.task_service.DTO.request.TaskStatusUpdateDTO;
 import com.apliman.task_service.DTO.response.IntrospectResponseDTO;
+import com.apliman.task_service.exception.ActionNotAllowedException;
 import com.apliman.task_service.exception.ResourceNotFoundException;
 import com.apliman.task_service.mapper.TaskMapper;
 import com.apliman.task_service.model.Category;
 import com.apliman.task_service.model.Task;
+import com.apliman.task_service.model.enums.TaskStatus;
 import com.apliman.task_service.repository.CategoryRepository;
 import com.apliman.task_service.repository.TaskRepository;
 
@@ -132,6 +134,7 @@ public class TaskService {
         // in all cases admin cannot access update task method
         Task task = findOwnedTaskOrThrow(id, currentUserId, currentUserRole);
 
+
         task.setTitle(dto.getTitle());
         task.setDescription(dto.getDescription());
         task.setDueDate(dto.getDueDate());
@@ -157,8 +160,20 @@ public class TaskService {
         // in all cases admin cannot access update status method
         Task task = findOwnedTaskOrThrow(id, currentUserId, currentUserRole);
 
+         TaskStatus current = task.getStatus();
+    TaskStatus target = dto.getStatus();
+
+         if (current == TaskStatus.DONE && target == TaskStatus.TODO) {
+            // 5. Marking a task `DONE` updates its timestamp, and once it's `DONE` it can't move directly back to `TODO` 
+            // it has to pass through `IN_PROGRESS` first.
+            throw new ActionNotAllowedException(
+                    "Cannot move a task directly from DONE to TODO. Move it to IN_PROGRESS first.");
+  
+        }
+
         task.setStatus(dto.getStatus());
         Task saved = taskRepo.save(task);
+
 
         return ResponseEntity.ok(taskMapper.toDTO(saved));
     }
@@ -173,3 +188,4 @@ public class TaskService {
         return ResponseEntity.noContent().build();
     }
 }
+
