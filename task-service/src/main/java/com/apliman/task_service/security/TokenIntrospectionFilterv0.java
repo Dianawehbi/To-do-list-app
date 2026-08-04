@@ -2,7 +2,6 @@ package com.apliman.task_service.security;
 
 import java.io.IOException;
 import java.time.Duration;
-import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 
@@ -21,9 +20,6 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.apliman.task_service.DTO.response.IntrospectResponseDTO;
-import com.github.benmanes.caffeine.cache.Cache;
-import com.github.benmanes.caffeine.cache.Caffeine;
-import com.github.benmanes.caffeine.cache.Expiry;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -31,12 +27,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 @Component
-public class TokenIntrospectionFilter extends OncePerRequestFilter {
-
-    private static final Duration MAX_CACHE_TTL = Duration.ofSeconds(60);
+public class TokenIntrospectionFilterv0 extends OncePerRequestFilter {
 
     private final RestTemplate restTemplate;
-    private final Cache<String, IntrospectResponseDTO> introspectionCache;
 
     @Value("${auth.internal-key}")
     private String internalKey;
@@ -44,43 +37,11 @@ public class TokenIntrospectionFilter extends OncePerRequestFilter {
     @Value("${auth-service.base-url}")
     private String authServiceBaseUrl;
 
-    public TokenIntrospectionFilter(RestTemplateBuilder builder) {
+    public TokenIntrospectionFilterv0(RestTemplateBuilder builder) {
+        // - Connect and read timeouts are set on that call; two seconds is enough.
         this.restTemplate = builder
                 .connectTimeout(Duration.ofSeconds(2))
                 .readTimeout(Duration.ofSeconds(2))
-                .build();
-
-        // Cache introspection results per token, capped at 60s, but expired sooner
-        // if the token's own expiresAt is closer than that.
-        this.introspectionCache = Caffeine.newBuilder()
-                .maximumSize(10_000)
-                .expireAfter(new Expiry<String, IntrospectResponseDTO>() {
-                    @Override
-                    public long expireAfterCreate(String key, IntrospectResponseDTO value, long currentTime) {
-                        return ttlNanos(value);
-                    }
-
-                    @Override
-                    public long expireAfterUpdate(String key, IntrospectResponseDTO value, long currentTime, long currentDuration) {
-                        return ttlNanos(value);
-                    }
-
-                    @Override
-                    public long expireAfterRead(String key, IntrospectResponseDTO value, long currentTime, long currentDuration) {
-                        return currentDuration; // don't extend TTL just because it was read
-                    }
-
-                    private long ttlNanos(IntrospectResponseDTO value) {
-                        Duration ttl = MAX_CACHE_TTL;
-                        if (value.getExpiresAt() != null) {
-                            Duration untilExpiry = Duration.between(Instant.now(), value.getExpiresAt());
-                            if (untilExpiry.compareTo(ttl) < 0) {
-                                ttl = untilExpiry.isNegative() ? Duration.ZERO : untilExpiry;
-                            }
-                        }
-                        return ttl.toNanos();
-                    }
-                })
                 .build();
     }
 
@@ -97,7 +58,15 @@ public class TokenIntrospectionFilter extends OncePerRequestFilter {
         var token = authHeader.substring(7).trim();
 
         try {
-            IntrospectResponseDTO result = introspectionCache.get(token, this::introspect);
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("X-Internal-Key", internalKey);
+            headers.setContentType(MediaType.APPLICATION_JSON);
+
+            var body = Map.of("token", token);
+            var entity = new HttpEntity<>(body, headers);
+
+            var result = restTemplate.postForObject(
+                    authServiceBaseUrl + "/api/auth/introspect", entity, IntrospectResponseDTO.class);
 
             if (result != null && result.isActive()) {
                 var authorities = List.of(new SimpleGrantedAuthority("ROLE_" + result.getRole()));
@@ -109,6 +78,7 @@ public class TokenIntrospectionFilter extends OncePerRequestFilter {
             // active == false -> proceed unauthenticated, entry point handles the 401
 
         } catch (ResourceAccessException e) {
+            // - If the verification call times out or fails to connect, that results in a 503, not a 401 —
             // auth-service unreachable or timed out -> 503, not 401
             response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
             response.setContentType("application/json");
@@ -117,20 +87,6 @@ public class TokenIntrospectionFilter extends OncePerRequestFilter {
         }
 
         filterChain.doFilter(request, response);
-    }
-
-    private IntrospectResponseDTO introspect(String token) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("X-Internal-Key", internalKey);
-        headers.setContentType(MediaType.APPLICATION_JSON);
-
-        var body = Map.of("token", token);
-        var entity = new HttpEntity<>(body, headers);
-
-        var result = restTemplate.postForObject(
-                authServiceBaseUrl + "/api/auth/introspect", entity, IntrospectResponseDTO.class);
-
-        return result != null ? result : IntrospectResponseDTO.inactive();
     }
 
     @Override

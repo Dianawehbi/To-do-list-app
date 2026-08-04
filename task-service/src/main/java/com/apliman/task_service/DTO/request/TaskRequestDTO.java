@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import com.apliman.task_service.model.enums.TaskPriority;
 import com.apliman.task_service.model.enums.TaskStatus;
 
+import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -26,6 +27,8 @@ public class TaskRequestDTO {
     @NotNull(message = "Priority is required")
     private TaskPriority priority;
 
+    @FutureOrPresent(message = "Due date cannot be in the past")
     private LocalDate dueDate;   // stays optional
+    
     private Long categoryId;     // stays optional
 }
