@@ -6,7 +6,6 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -98,9 +97,19 @@ public class AuthService {
         user.setPasswordHash(encoder.encode(dto.getPassword()));
         user.setCreatedAt(LocalDateTime.now());
 
-        User savedUser = userRepository.save(user);
+         userRepository.save(user);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(userMapper.toDto(savedUser));
+        String accessToken = jwtService.generateToken(dto.getUsername());
+        RefreshToken refreshToken = refreshTokenService.createRefreshToken(dto.getUsername());
+
+        long expiresAt = Instant.now().plusMillis(jwtService.getAccessTokenExpirationMs()).getEpochSecond();
+
+        AuthResponseDTO authResponse = new AuthResponseDTO();
+        authResponse.setAccessToken(accessToken);
+        authResponse.setRefreshToken(refreshToken.getToken());
+        authResponse.setAccessTokenExpiresAt(expiresAt);
+
+        return ResponseEntity.ok(authResponse);
     }
 
     public ResponseEntity<?> logout(RefreshTokenRequestDTO dto) {
