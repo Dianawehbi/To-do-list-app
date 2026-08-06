@@ -1,0 +1,42 @@
+<div class="user-page">
+  <div class="page-header">
+    <div>
+      <h1>Users</h1>
+      <p>Manage users and permissions</p>
+    </div>
+  </div>
+
+  @if (errorMessage()) {
+    <p class="error-banner">
+      {{ errorMessage() }}
+    </p>
+  }
+
+  @if (isLoading()) {
+    <p class="loading">Loading users...</p>
+  } @else {
+    @if (users().length === 0) {
+      <p class="empty">No users found.</p>
+    } @else {
+      <div class="user-list">
+        @for (user of users(); track user.id) {
+          <app-user-card [user]="user" (disable)="onDelete($event)" (enable)="onEnable($event)" />
+        }
+      </div>
+    }
+  }
+
+  <!-- Pagination -->
+
+  <div class="pagination">
+    <button (click)="previousPage()" [disabled]="currentPage() === 0">Previous</button>
+
+    @for (page of [].constructor(totalPages()); track $index) {
+      <button (click)="goToPage($index)" [class.active]="currentPage() === $index">
+        {{ $index + 1 }}
+      </button>
+    }
+
+    <button (click)="nextPage()" [disabled]="currentPage() === totalPages() - 1">Next</button>
+  </div>
+</div>

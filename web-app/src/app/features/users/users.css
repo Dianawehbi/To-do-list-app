@@ -1,0 +1,106 @@
+.user-page {
+  padding: 1.5rem;
+}
+
+.error-banner {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #b91c1c;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  font-weight: 500;
+}
+
+/* Header */
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  margin-bottom: 1.5rem;
+}
+
+
+.page-header h1 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #333;
+}
+
+
+.page-header p {
+  margin: 0.3rem 0 0;
+
+  color: #777;
+  font-size: 0.9rem;
+}
+
+
+/* Add button */
+
+.add-btn {
+
+  padding: 0.6rem 1rem;
+
+  border: none;
+  border-radius: 6px;
+
+  background: #4a90d9;
+  color: white;
+
+  font-size: 0.95rem;
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+
+/* Filters */
+
+.user-toolbar {
+
+  display: flex;
+  gap: 1rem;
+
+  margin-bottom: 1.5rem;
+}
+
+
+.user-toolbar input,
+.user-toolbar select {
+
+  padding: 0.6rem 0.75rem;
+
+  border: 1px solid #ccc;
+  border-radius: 4px;
+
+  font-size: 0.95rem;
+}
+
+
+.user-toolbar input {
+  width: 280px;
+}
+
+
+.user-toolbar input:focus,
+.user-toolbar select:focus {
+
+  outline: none;
+  border-color: #4a90d9;
+
+}
+
+
+/* User cards */
+
+.user-list {
+
+  display: flex;
+  flex-direction: column;
+
+  gap: 0.8rem;
+}

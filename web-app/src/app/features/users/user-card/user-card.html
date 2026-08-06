@@ -1,0 +1,23 @@
+<div class="user-row" [class.disabled]="!user().enabled">
+  <div class="user-avatar">
+    {{ user().username.charAt(0).toUpperCase() }}
+  </div>
+
+  <div class="user-info">
+    <span class="username">{{ user().username }}</span>
+    <span class="email">{{ user().email }}</span>
+  </div>
+
+  <div class="user-meta">
+    <span class="status-badge" [class.active]="user().enabled">
+      {{ user().enabled ? 'Enabled' : 'Disabled' }}
+    </span>
+  </div>
+
+  <div class="user-actions">
+    <button class="toggle-btn" (click)="onEdit()">Edit</button>
+    <button [class.delete-btn]="user().enabled" [class.enable-btn]="!user().enabled" (click)="onToggleEnabled()">
+      {{ user().enabled ? 'Disable' : 'Enable'  }}
+    </button>
+  </div>
+</div>
