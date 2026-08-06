@@ -1,0 +1,90 @@
+<form class="register-card" [formGroup]="form" (ngSubmit)="onSubmit()">
+  <h2>Create An Account</h2>
+
+  @if (errorMessage()) {
+    <p class="error-banner">{{ errorMessage() }}</p>
+  }
+
+  <div class="field">
+    <label for="email">Email</label>
+    <input
+      id="email"
+      type="email"
+      formControlName="email"
+      placeholder="you@example.com"
+      autocomplete="email"
+    />
+    @if (emailIsInvalid && !form.controls.email.errors?.['server']) {
+      <p class="error">Please enter a valid email address.</p>
+    }
+  </div>
+
+  <div class="field">
+    <label for="username">Username</label>
+    <input
+      id="username"
+      type="text"
+      formControlName="username"
+      placeholder="your username"
+      autocomplete="username"
+    />
+    @if (usernameIsInvalid && !form.controls.username.errors?.['server']) {
+      <p class="error">Username must be at least 3 characters.</p>
+    }
+  </div>
+
+  <div formGroupName="passwords" class="field-group">
+    <div class="field">
+      <label for="password">Password</label>
+      <input
+        id="password"
+        type="password"
+        formControlName="password"
+        placeholder="••••••"
+        autocomplete="new-password"
+      />
+      @if (passwordIsInvalid) {
+        <p class="error">Password must be at least 6 characters.</p>
+      }
+    </div>
+
+    <div class="field">
+      <label for="confirmPassword">Confirm Password</label>
+      <input
+        id="confirmPassword"
+        type="password"
+        formControlName="confirmPassword"
+        placeholder="••••••"
+      />
+      @if (confirmPasswordIsInvalid) {
+        <p class="error">Please confirm your password.</p>
+      }
+    </div>
+  </div>
+  <div>
+    @if (form.controls.email.errors?.['server']) {
+      <p class="error server-error">{{ form.controls.email.errors?.['server'] }}</p>
+    }
+    @if (form.controls.username.errors?.['server']) {
+      <p class="error server-error">{{ form.controls.username.errors?.['server'] }}</p>
+    }
+    @if (form.controls.passwords.controls.password.errors?.['server']) {
+      <p class="error server-error">
+        {{ form.controls.passwords.controls.password.errors?.['server'] }}
+      </p>
+    }
+    @if (passwordsDoNotMatch) {
+      <p class="error">Passwords do not match.</p>
+    }
+  </div>
+
+  <button type="submit" [disabled]="form.invalid || isSubmitting()">
+    @if (isSubmitting()) {
+      <span class="spinner"></span>
+      Creating account...
+    } @else {
+      Register
+    }
+  </button>
+  <button type="button" class="link-btn" (click)="toLogin()">Already have an account?</button>
+</form>
