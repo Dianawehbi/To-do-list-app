@@ -1,0 +1,131 @@
+:host {
+  display: block;
+}
+
+/* HEADER */
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1.8rem;
+  height: 64px;
+
+  /* soft pastel background */
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+
+  border-bottom: 1px solid #f0f0f0;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+/* LEFT */
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
+
+/* LOGO */
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  text-decoration: none;
+
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: #444;
+}
+
+/* pastel icon */
+.logo-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+
+  background: linear-gradient(135deg, #c5a3ff, #a0c4ff);
+  color: white;
+  font-size: 1rem;
+
+  box-shadow: 0 4px 10px rgba(160, 196, 255, 0.4);
+}
+
+/* NAV */
+.main-nav {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.main-nav a {
+  padding: 0.45rem 0.9rem;
+  border-radius: 10px;
+
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 500;
+
+  color: #777;
+  transition: all 0.25s ease;
+}
+
+/* hover */
+.main-nav a:hover {
+  background: #f5f3ff;
+  color: #5b4bdb;
+}
+
+/* active pastel */
+.main-nav a.active {
+  background: linear-gradient(135deg, #ede9fe, #e0f2fe);
+  color: #5b4bdb;
+  box-shadow: 0 3px 10px rgba(160, 196, 255, 0.2);
+}
+
+/* RIGHT */
+.header-right {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+/* badge */
+.role-badge {
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+
+  background: #ede9fe;
+  color: #6d28d9;
+  text-transform: uppercase;
+}
+
+/* LOGIN BUTTON */
+.auth-link {
+  padding: 0.45rem 1rem;
+
+  border-radius: 12px;
+  text-decoration: none;
+
+  font-size: 0.9rem;
+  font-weight: 500;
+
+  color: white;
+  background: linear-gradient(135deg, #c5a3ff, #a0c4ff);
+
+  transition: all 0.25s ease;
+}
+
+.auth-link:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 14px rgba(160, 196, 255, 0.4);
+}

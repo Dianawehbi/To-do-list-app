@@ -1,0 +1,23 @@
+<header class="app-header">
+  <div class="header-left">
+    <a routerLink="/tasks" class="logo">
+      <span class="logo-icon">✓</span>
+      <span class="logo-text">TaskFlow</span>
+    </a>
+
+    <nav class="main-nav">
+      <a routerLink="/tasks" routerLinkActive="active">Tasks</a>
+      <a routerLink="/categories" routerLinkActive="active">Categories</a>
+      @if (isAdmin()) {
+        <a routerLink="/users" routerLinkActive="active"> Users </a>
+      }
+    </nav>
+  </div>
+
+  <div class="header-right">
+    <a routerLink="/login" class="auth-link">Login</a>
+    @if (isLoggedIN()) {
+      <a (click)="onLogout()" class="auth-link">Logout</a>
+    }
+  </div>
+</header>
