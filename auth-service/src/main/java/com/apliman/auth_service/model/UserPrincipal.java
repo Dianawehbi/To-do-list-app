@@ -35,4 +35,7 @@ public class UserPrincipal implements UserDetails {
         return user.getEnabled();
     }
 
+    public Long getId() {
+        return user.getId();
+    }
 }

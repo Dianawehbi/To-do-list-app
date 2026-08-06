@@ -1,6 +1,6 @@
 import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { catchError, throwError } from 'rxjs';
+import { catchError, firstValueFrom, throwError } from 'rxjs';
 
 import { environment } from '../../environments/environment';
 import { ApiErrorResponse, PageResponse } from '../models/auth.model';
@@ -39,25 +39,27 @@ export class UserService {
   }
 
   // PUT /api/users/{id}
-  updateUser(id: number, data: UserRequestData) {
-    return this.http.put<User>(`${this.baseUrl}/${id}`, data).pipe(
-      catchError((error: HttpErrorResponse) => {
-        const apiError = error.error as ApiErrorResponse;
-
-        return throwError(() => apiError);
-      }),
+  async updateUser(id: number, data: UserRequestData): Promise<void> {
+    await firstValueFrom(
+      this.http.put<User>(`${this.baseUrl}/${id}`, data).pipe(
+        catchError((error: HttpErrorResponse) => {
+          const apiError = error.error as ApiErrorResponse;
+          return throwError(() => apiError);
+        }),
+      ),
     );
   }
 
   // DELETE /api/users/{id}
   // Backend only disables the user
-  deleteUser(id: number) {
-    return this.http.delete<void>(`${this.baseUrl}/${id}`).pipe(
-      catchError((error: HttpErrorResponse) => {
-        const apiError = error.error as ApiErrorResponse;
-
-        return throwError(() => apiError);
-      }),
+  async deleteUser(id: number): Promise<void> {
+    await firstValueFrom(
+      this.http.delete<void>(`${this.baseUrl}/${id}`).pipe(
+        catchError((error: HttpErrorResponse) => {
+          const apiError = error.error as ApiErrorResponse;
+          return throwError(() => apiError);
+        }),
+      ),
     );
   }
 }

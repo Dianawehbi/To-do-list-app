@@ -5,6 +5,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.apliman.auth_service.DTO.request.UserRequestDTO;
 import com.apliman.auth_service.DTO.response.UserResponseDTO;
+import com.apliman.auth_service.model.UserPrincipal;
 import com.apliman.auth_service.service.UserService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -56,9 +58,11 @@ public class UserController {
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Update a user")
     public ResponseEntity<UserResponseDTO> updateUser(
+            @AuthenticationPrincipal UserPrincipal principal,
             @PathVariable Long id,
             @Valid @RequestBody UserRequestDTO dto) {
-        return userService.updateUser(id, dto);
+        return userService.updateUser(principal.getId(), id, dto);
+
     }
 
     // DELETE /api/users/{id} - admin only -  Sets `enabled` to false 
@@ -70,4 +74,4 @@ public class UserController {
         return userService.deleteUser(id, authentication.getName());
     }
 }
-
+ 

@@ -9,12 +9,4 @@ import { HeaderComponent } from '../features/shared/header/header';
   imports: [RouterOutlet, HeaderComponent],
   templateUrl: './main-layout.html',
 })
-export class MainLayoutComponent {
-  private authService = inject(AuthService);
-
-  currentUser = this.authService.currentUser; 
-
-  onLogout(): void {
-    this.authService.logout();
-  }
-}
+export class MainLayoutComponent {}

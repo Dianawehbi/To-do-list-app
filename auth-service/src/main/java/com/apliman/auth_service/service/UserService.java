@@ -46,7 +46,7 @@ public class UserService {
     }
 
     // update user
-    public ResponseEntity<UserResponseDTO> updateUser(Long id, UserRequestDTO dto) {
+    public ResponseEntity<UserResponseDTO> updateUser( Long adminId ,Long id, UserRequestDTO dto) {
         User user = userRepo.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
 
@@ -62,7 +62,7 @@ public class UserService {
                     throw new DuplicateResourceException("Email already in use: " + dto.getEmail());
                 });
 
-        if (!dto.getEnabled() && Objects.equals(user.getId(), id)) {
+        if (!dto.getEnabled() && Objects.equals(adminId, id)) {
             throw new SelfActionNotAllowedException("You cannot disable your own account");
         }
 
