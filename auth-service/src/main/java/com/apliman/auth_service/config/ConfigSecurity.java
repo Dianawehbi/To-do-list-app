@@ -36,6 +36,7 @@ public class ConfigSecurity {
     private static final String[] PUBLIC_PATHS = {
         "/api/auth/login",
         "/api/auth/register",
+        "/api/auth/logout",
         "/api/auth/refresh",
         "/api/auth/introspect", // protected by InternalKeyFilter instead of JWT
         "/error"
