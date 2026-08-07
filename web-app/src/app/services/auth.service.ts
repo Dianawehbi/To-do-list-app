@@ -1,7 +1,7 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { computed, inject, Injectable, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { catchError, firstValueFrom, tap, throwError } from 'rxjs';
+import { catchError, firstValueFrom, switchMap, tap, throwError } from 'rxjs';
 import {
   ApiErrorResponse,
   LoginRequest,
@@ -33,6 +33,7 @@ export class AuthService {
   login(loginRequest: LoginRequest) {
     return this.http.post<LoginResponse>(`${this.baseUrl}/auth/login`, loginRequest).pipe(
       tap((response) => this.handleAuthentication(response)),
+      switchMap(() => this.fetchCurrentUser()),
       catchError((error: HttpErrorResponse) => {
         const apiError = error.error as ApiErrorResponse;
         return throwError(() => apiError);
@@ -43,6 +44,7 @@ export class AuthService {
   register(regRequest: RegisterRequest) {
     return this.http.post<LoginResponse>(`${this.baseUrl}/auth/register`, regRequest).pipe(
       tap((response) => this.handleAuthentication(response)),
+      switchMap(() => this.fetchCurrentUser()),
       catchError((error: HttpErrorResponse) => {
         const apiError = error.error as ApiErrorResponse;
         return throwError(() => apiError);
@@ -54,9 +56,10 @@ export class AuthService {
     const refreshToken = localStorage.getItem(REFRESH_TOKEN_KEY);
     console.log(' refresh access token service ');
 
-    return this.http
-      .post<LoginResponse>(`${this.baseUrl}/auth/refresh`, { refreshToken })
-      .pipe(tap((response) => this.handleAuthentication(response)));
+    return this.http.post<LoginResponse>(`${this.baseUrl}/auth/refresh`, { refreshToken }).pipe(
+      tap((response) => this.handleAuthentication(response)),
+      switchMap(() => this.fetchCurrentUser()),
+    );
   }
 
   logout() {
@@ -107,8 +110,7 @@ export class AuthService {
 
     this.autoLogout(expirationDuration);
 
-    // fetch user after login/register
-    this.fetchCurrentUser().subscribe();
+    // this.fetchCurrentUser().subscribe();
   }
 
   fetchCurrentUser() {
@@ -143,7 +145,7 @@ export class AuthService {
     if (this.tokenExpirationTimer) {
       clearTimeout(this.tokenExpirationTimer);
     }
-    // No forced logout here —  the interceptor's reactive 401-> refresh 
+    // No forced logout here —  the interceptor's reactive 401-> refresh
   }
 
   private clearSession(): void {
