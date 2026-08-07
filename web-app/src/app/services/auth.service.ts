@@ -52,6 +52,8 @@ export class AuthService {
 
   refreshAccessToken() {
     const refreshToken = localStorage.getItem(REFRESH_TOKEN_KEY);
+    console.log(' refresh access token service ');
+
     return this.http
       .post<LoginResponse>(`${this.baseUrl}/auth/refresh`, { refreshToken })
       .pipe(tap((response) => this.handleAuthentication(response)));
@@ -62,8 +64,7 @@ export class AuthService {
     const refreshToken = localStorage.getItem(REFRESH_TOKEN_KEY);
 
     this.http.post(`${this.baseUrl}/auth/logout`, { refreshToken }).subscribe({
-      error: () => {
-      },
+      error: () => {},
     });
 
     this.clearSession();
@@ -94,6 +95,7 @@ export class AuthService {
   }
 
   private handleAuthentication(response: LoginResponse): void {
+    console.log(response);
     const expiresAt = response.accessTokenExpiresAt * 1000;
     const expirationDuration = expiresAt - new Date().getTime();
 
@@ -115,28 +117,33 @@ export class AuthService {
         this.currentUser.set(user);
       }),
       catchError((error: HttpErrorResponse) => {
-        // if (error.status === 401 || server not reached) {
-        this.logout(); // token invalid -> logout
-        // }
         return throwError(() => error);
       }),
     );
   }
 
+  // private autoLogout(expirationDuration: number): void {
+  //   console.log("auto logout");
+  //   if (this.tokenExpirationTimer) {
+  //     clearTimeout(this.tokenExpirationTimer);
+  //   }
+
+  //   //  Prevent instant logout
+  //   if (expirationDuration <= 0) {
+  //     this.logout();
+  //     return;
+  //   }
+
+  //   this.tokenExpirationTimer = setTimeout(() => {
+  //     this.logout();
+  //   }, expirationDuration);
+  // }
+
   private autoLogout(expirationDuration: number): void {
     if (this.tokenExpirationTimer) {
       clearTimeout(this.tokenExpirationTimer);
     }
-
-    //  Prevent instant logout
-    if (expirationDuration <= 0) {
-      this.logout();
-      return;
-    }
-
-    this.tokenExpirationTimer = setTimeout(() => {
-      this.logout();
-    }, expirationDuration);
+    // No forced logout here —  the interceptor's reactive 401-> refresh 
   }
 
   private clearSession(): void {
