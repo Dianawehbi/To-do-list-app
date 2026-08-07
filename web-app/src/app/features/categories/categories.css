@@ -1,0 +1,92 @@
+.category-page {
+  padding: 1.5rem;
+}
+
+/* Header */
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.page-header h1 {
+  margin: 0;
+  font-size: 1.5rem;
+  color: #333;
+}
+
+.page-header p {
+  margin: 0.3rem 0 0;
+  color: #777;
+  font-size: 0.9rem;
+}
+
+/* Add button */
+
+/* Add button */
+
+.add-btn {
+  display: inline-block; /* anchors need this for padding to work properly */
+  padding: 0.6rem 1rem;
+  border: none;
+  border-radius: 6px;
+  background: #4a90d9;
+  color: white;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none; /* removes the underline anchors get by default */
+}
+
+.add-btn:hover {
+  background: #3f7dc0; /* slightly darker on hover, common UX pattern for buttons */
+}
+
+.error-banner {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #b91c1c;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  font-weight: 500;
+}
+
+.add-btn:visited {
+  color: white; /* anchors turn purple after being visited by default — override it */
+}
+
+/* Toolbar */
+
+.category-toolbar {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.category-toolbar input,
+.category-toolbar select {
+  padding: 0.6rem 0.75rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 0.95rem;
+}
+
+.category-toolbar input {
+  width: 260px;
+}
+
+.category-toolbar input:focus,
+.category-toolbar select:focus {
+  outline: none;
+  border-color: #4a90d9;
+}
+
+/* Cards grid */
+
+.category-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1rem;
+}

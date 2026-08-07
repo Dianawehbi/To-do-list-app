@@ -1,0 +1,54 @@
+<div class="category-page">
+  <div class="page-header">
+    <div>
+      <h1>Categories</h1>
+      <p>Manage your task categories</p>
+    </div>
+
+    @if (isAdmin()) {
+      <a routerLink="/categories/new" class="add-btn">+ Add Category</a>
+    }
+  </div>
+
+  @if (errorMessage()) {
+    <p class="error-banner">
+      {{ errorMessage() }}
+    </p>
+  }
+
+  <div class="category-toolbar">
+    <!-- <select (change)="filterCategories($event)">
+      <option value="all">All categories</option>
+      <option value="active">Active</option>
+      <option value="inactive">Inactive</option>
+    </select> -->
+
+    <select [formControl]="statusFilter">
+      <option value="all">All categories</option>
+      <option value="active">Active</option>
+      <option value="inactive">Inactive</option>
+    </select>
+  </div>
+
+  @if (isLoading()) {
+    <p>Loading categories...</p>
+  } @else {
+    <div class="category-grid">
+      @for (category of categories(); track category.id) {
+        <app-category-card [category]="category" (delete)="onDeleteCategory($event)" />
+      }
+    </div>
+  }
+
+  <div class="pagination">
+    <button (click)="previousPage()" [disabled]="currentPage() === 0">Previous</button>
+
+    @for (page of [].constructor(totalPages()); track $index) {
+      <button (click)="goToPage($index)" [class.active]="currentPage() === $index">
+        {{ $index + 1 }}
+      </button>
+    }
+
+    <button (click)="nextPage()" [disabled]="currentPage() === totalPages() - 1">Next</button>
+  </div>
+</div>

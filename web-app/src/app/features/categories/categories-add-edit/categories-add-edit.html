@@ -1,0 +1,57 @@
+<div class="category-new-page">
+  <h2>Create Category</h2>
+
+  <form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <div>
+      <label for="name"> Category Name </label>
+
+      <input id="name" type="text" formControlName="name" placeholder="Category name..." />
+
+      @if (nameIsInvalid) {
+        <p class="error">Name is required and must be under 50 characters.</p>
+      }
+    </div>
+
+    <div>
+      <label for="color"> Color </label>
+
+      <div class="color-input">
+        <input id="color" type="color" formControlName="color" />
+
+        <input type="text" [value]="form.value.color" readonly />
+      </div>
+    </div>
+
+    <div class="active-field">
+      <label class="switch">
+        <input type="checkbox" formControlName="active" />
+
+        <span class="slider"></span>
+      </label>
+
+      <span class="active-label">
+        {{ form.controls.active.value ? 'Active' : 'Inactive' }}
+      </span>
+    </div>
+
+    @if (submitError()) {
+      <p class="error">
+        {{ submitError() }}
+      </p>
+    }
+
+    <div class="actions">
+      @if (isEditMode()) {
+        <button type="submit" [disabled]="isSubmitting()">
+          {{ isSubmitting() ? 'Updating...' : 'Update Category' }}
+        </button>
+      } @else {
+        <button type="submit" [disabled]="isSubmitting()">
+          {{ isSubmitting() ? 'Creating...' : 'Create Category' }}
+        </button>
+      }
+
+      <a routerLink="/categories">Cancel</a>
+    </div>
+  </form>
+</div>

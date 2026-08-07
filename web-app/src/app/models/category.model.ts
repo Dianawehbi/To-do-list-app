@@ -1,7 +1,7 @@
 export interface CategoryResponseData {
   id: number;
   name: string;
-  color: string; // hex code, e.g. "#3b82f6"
+  color: string; // hex code "#3b82f6"
   active: boolean;
 }
 

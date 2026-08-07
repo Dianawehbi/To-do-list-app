@@ -1,0 +1,19 @@
+<div
+  class="category-card"
+  [class.inactive]="!category().active"
+  [style.--category-color]="category().color"
+>
+  <div class="category-info">
+    <h4>{{ category().name }}</h4>
+    <span class="status-badge" [class.active]="category().active">
+      {{ category().active ? 'Active' : 'Inactive' }}
+    </span>
+  </div>
+
+  @if (isAdmin()) {
+    <div class="category-actions">
+      <button class="edit-btn" (click)="onEdit()">Edit</button>
+      <button class="delete-btn" (click)="onDelete()">Delete</button>
+    </div>
+  }
+</div>
