@@ -10,7 +10,7 @@ import com.apliman.task_service.model.Category;
 
 public interface CategoryRepository extends JpaRepository<Category, Object> {
 
-    Page<Category> findByActive(boolean active, Pageable pageable);
+    Page<Category> findByActive(Integer active, Pageable pageable);
 
     boolean existsByName(String name);
 

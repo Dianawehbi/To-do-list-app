@@ -31,8 +31,10 @@ public class CategoryService {
     public ResponseEntity<Page<Category>> getAllCategories(int page, int size, Boolean active) {
         Pageable pageable = PageRequest.of(page, size);
 
-        Page<Category> categories = (active != null)
-                ? categoryRepo.findByActive(active, pageable)
+        Integer activeFlag = (active != null) ? (active ? 1 : 0) : null;
+
+        Page<Category> categories = (activeFlag  != null)
+                ? categoryRepo.findByActive(activeFlag, pageable)
                 : categoryRepo.findAll(pageable);
 
         return ResponseEntity.ok(categories);
