@@ -26,27 +26,22 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
         return throwError(() => error);
       }
 
-      // logout + refresh + ststua : 404
-
-      // Only handle 401 globally
-      if (error.status !== 401) {
-        router.navigate(['/login']);
-        return throwError(() => error);
+      if (error.status === 401) {
+        return authService.refreshAccessToken().pipe(
+          switchMap(() => {
+            const newToken = authService.accessToken();
+            const retriedReq = req.clone({
+              setHeaders: { Authorization: `Bearer ${newToken}` },
+            });
+            return next(retriedReq);
+          }),
+          catchError((refreshError) => {
+            authService.logout();
+            return throwError(() => refreshError);
+          }),
+        );
       }
-
-      return authService.refreshAccessToken().pipe(
-        switchMap(() => {
-          const newToken = authService.accessToken();
-          const retriedReq = req.clone({
-            setHeaders: { Authorization: `Bearer ${newToken}` },
-          });
-          return next(retriedReq);
-        }),
-        catchError((refreshError) => {
-          authService.logout();
-          return throwError(() => refreshError);
-        }),
-      );
+      return throwError(() => error);
     }),
   );
 };
