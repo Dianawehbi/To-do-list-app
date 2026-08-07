@@ -1,0 +1,31 @@
+<div class="task-card" [class.done]="task().isDone" [class.overdue]="task().isOverdue">
+  <div class="task-header">
+    <h3>{{ task().title }}</h3>
+    <span class="priority-badge" [class]="task().priority.toLowerCase()">
+      {{ task().priority }}
+    </span>
+  </div>
+
+  @if (task().description) {
+    <p class="description">
+      {{ task().description }}
+    </p>
+  }
+
+  @if (!task().description) {
+    <p class="description">No description</p>
+  }
+
+  <div class="task-meta">
+    <span class="status-badge" [class]="task().status.toLowerCase()">
+      {{ task().status }}
+    </span>
+  </div>
+
+  @if (!isAdmin()) {
+    <div class="task-actions">
+      <button (click)="onEdit()" class="edit-btn">Edit</button>
+      <button (click)="onDelete()" class="delete-btn">Delete</button>
+    </div>
+  }
+</div>

@@ -63,7 +63,6 @@ export class AuthService {
 
     this.http.post(`${this.baseUrl}/auth/logout`, { refreshToken }).subscribe({
       error: () => {
-        /* ignore — we're logging out locally either way */
       },
     });
 

@@ -1,0 +1,135 @@
+.task-page {
+  padding: 1.5rem;
+}
+
+/* Header */
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  margin-bottom: 1.5rem;
+}
+
+.page-header h1 {
+  margin: 0;
+  color: #333;
+  font-size: 1.5rem;
+}
+
+.page-header p {
+  margin: 0.3rem 0 0;
+  color: #777;
+  font-size: 0.9rem;
+}
+
+/* Add button */
+
+.add-task-btn {
+  padding: 0.65rem 1.1rem;
+
+  background: #4a90d9;
+  color: white;
+
+  border: none;
+  border-radius: 6px;
+
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* Filters */
+
+.filters-card {
+  display: flex;
+  gap: 1rem;
+
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+
+  background: white;
+
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.filter-group label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.filter-group select {
+  padding: 0.6rem 0.75rem;
+
+  border: 1px solid #ccc;
+  border-radius: 4px;
+
+  font-size: 0.95rem;
+
+  min-width: 170px;
+}
+
+.filter-group select:focus {
+  outline: none;
+  border-color: #4a90d9;
+}
+
+/* Task cards */
+
+.task-list {
+  display: grid;
+
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+
+  gap: 1rem;
+}
+
+/* Empty */
+
+.empty-state {
+  padding: 2rem;
+
+  text-align: center;
+
+  color: #999;
+
+  background: #fafafa;
+
+  border-radius: 10px;
+}
+
+/* Toolbar */
+
+.category-toolbar {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.category-toolbar input,
+.category-toolbar select {
+  padding: 0.6rem 0.75rem;
+
+  border: 1px solid #ccc;
+  border-radius: 4px;
+
+  font-size: 0.95rem;
+}
+
+.category-toolbar input {
+  width: 260px;
+}
+
+.category-toolbar input:focus,
+.category-toolbar select:focus {
+  outline: none;
+  border-color: #4a90d9;
+}

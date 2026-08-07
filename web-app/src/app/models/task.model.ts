@@ -8,7 +8,7 @@ export interface TaskRequestData {
   description: string | null;
   status: TaskStatus;
   priority: TaskPriority;
-  dueDate: string | null;   // ISO date string, e.g. "2026-08-15"
+  dueDate: string | null;   
   categoryId: number | null;
 }
 
@@ -18,7 +18,7 @@ export interface TaskResponseData {
   description: string | null;
   status: TaskStatus;
   priority: TaskPriority;
-  dueDate: string | null;   // ISO date string, e.g. "2026-08-15"
+  dueDate: string | null;   
   categoryId: number | null;
   ownerUserId: number;
   createdAt: string;

@@ -4,6 +4,7 @@ import { adminGuard } from './guards/admin-guard';
 import { LoginComponent } from './features/login/login';
 import { MainLayoutComponent } from './main-layout/main-layout';
 import { RegisterComponent } from './features/register/register';
+import { userGuard } from './guards/user-auth';
 
 export const routes: Routes = [
   // No header — outside the layout
@@ -25,12 +26,27 @@ export const routes: Routes = [
         path: 'tasks/new',
         loadComponent: () =>
           import('./features/tasks/task-new/task-new').then((m) => m.TaskNewComponent),
+        canActivate: [userGuard],
+      },
+      {
+        path: 'tasks/:id/edit',
+        loadComponent: () =>
+          import('./features/tasks/task-new/task-new').then((m) => m.TaskNewComponent),
+        canActivate: [userGuard],
+      },
+      {
+        path: 'categories/:id/edit',
+        loadComponent: () =>
+          import('./features/categories/categories-add-edit/categories-add-edit').then(
+            (m) => m.CategoriesAddEditComponent,
+          ),
+        canActivate: [adminGuard],
       },
       {
         path: 'categories/new',
         loadComponent: () =>
-          import('./features/categories/categories-new/categories-new').then(
-            (m) => m.CategoriesNewComponent,
+          import('./features/categories/categories-add-edit/categories-add-edit').then(
+            (m) => m.CategoriesAddEditComponent,
           ),
         canActivate: [adminGuard],
       },
@@ -48,7 +64,7 @@ export const routes: Routes = [
       {
         path: 'users',
         loadComponent: () => import('./features/users/users').then((m) => m.UsersComponent),
-        canActivate: [adminGuard, authGuard],
+        canActivate: [adminGuard],
       },
       { path: '**', redirectTo: 'tasks' },
     ],

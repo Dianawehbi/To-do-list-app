@@ -1,0 +1,78 @@
+<div class="task-new-page">
+  @if (isLoading()) {
+    <p>Loading task...</p>
+  } @else if (taskNotFound()) {
+    <p class="error">Task not found.</p>
+    <button type="button" (click)="onCancel()">Back to tasks</button>
+  } @else {
+    <h2>{{ isEditMode() ? 'Edit Task' : 'Create a Task' }}</h2>
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+      <div>
+        <label for="title">Title</label>
+        <input id="title" type="text" formControlName="title" placeholder="Task title..." />
+        @if (titleIsInvalid) {
+          <p class="error">Title is required and must be under 150 characters.</p>
+        }
+      </div>
+
+      <div>
+        <label for="description">Description</label>
+        <textarea
+          id="description"
+          formControlName="description"
+          placeholder="Optional description..."
+          rows="4"
+        ></textarea>
+      </div>
+
+      <div class="form-row">
+        <div>
+          <label for="status">Status</label>
+          <select id="status" formControlName="status">
+            <option value="TODO">To Do</option>
+            <option value="IN_PROGRESS">In Progress</option>
+            <option value="DONE">Done</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="priority">Priority</label>
+          <select id="priority" formControlName="priority">
+            <option value="LOW">Low</option>
+            <option value="MEDIUM">Medium</option>
+            <option value="HIGH">High</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="dueDate">Due Date</label>
+          <input id="dueDate" type="date" formControlName="dueDate" />
+        </div>
+      </div>
+
+      <div>
+        <label for="category">Category</label>
+        <select id="category" formControlName="categoryId">
+          <option value="">No category</option>
+          @for (category of categories(); track category.id) {
+            <option [value]="category.id">{{ category.name }}</option>
+          }
+        </select>
+      </div>
+
+      @if (submitError()) {
+        <div class="error-banner">
+          <p>{{ submitError() }}</p>
+        </div>
+      }
+
+      <div class="actions">
+        <button type="submit" [disabled]="isSubmitting()">
+          {{ isSubmitting() ? (isEditMode() ? 'Saving...' : 'Creating...') : (isEditMode() ? 'Save Changes' : 'Create Task') }}
+        </button>
+        <button type="button" (click)="onCancel()">Cancel</button>
+      </div>
+    </form>
+  }
+</div>

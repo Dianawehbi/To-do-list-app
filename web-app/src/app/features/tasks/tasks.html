@@ -1,0 +1,82 @@
+<div class="task-page">
+  <!-- Page Header -->
+  <section class="page-header">
+    <div>
+      <h1>Tasks</h1>
+      <p>Manage and track your tasks</p>
+    </div>
+
+    @if (!isAdmin()) {
+      <button class="add-task-btn" (click)="onAddTask()">+ Add Task</button>
+    }
+  </section>
+
+  <!-- Error message -->
+  @if (errorMessage()) {
+    <div class="error-banner">
+      {{ errorMessage() }}
+    </div>
+  }
+
+  <div class="category-toolbar">
+    <input type="text" placeholder="Search categories..." [formControl]="searchControl" />
+
+    <select
+      id="status-filter"
+      [value]="selectedStatus"
+      (change)="onStatusChange($any($event.target).value)"
+    >
+      <option value="ALL">All statuses</option>
+      <option value="TODO">To Do</option>
+      <option value="IN_PROGRESS">In Progress</option>
+      <option value="DONE">Done</option>
+    </select>
+
+    <select
+      id="category-filter"
+      [value]="selectedCategoryId"
+      (change)="onCategoryChange($any($event.target).value)"
+    >
+      <option value="ALL">All categories</option>
+      @for (category of categories(); track category.id) {
+        <option [value]="category.id">
+          {{ category.name }}
+        </option>
+      }
+    </select>
+  </div>
+
+  <!-- Tasks List -->
+  <section class="task-list">
+    @if (isLoading()) {
+      <div class="loading-state">Loading tasks...</div>
+    } @else {
+      @if (tasks().length === 0) {
+        <div class="empty-state">No tasks found</div>
+      } @else {
+        @for (task of tasks(); track task.id) {
+          <app-task-card
+            [task]="task"
+            (delete)="onDeleteTask($event)"
+            (statusChange)="onStatusPatch(task.id, $event.status)"
+          />
+        }
+      }
+    }
+  </section>
+
+  <!-- Pagination -->
+  @if (totalPages() > 1) {
+    <section class="pagination">
+      <button (click)="previousPage()" [disabled]="currentPage() === 0">Previous</button>
+
+      @for (page of [].constructor(totalPages()); track $index) {
+        <!-- <button (click)="goToPage($index)" [class.active]="currentPage() === $index">
+          {{ $index + 1 }}
+        </button> -->
+      }
+
+      <button (click)="nextPage()" [disabled]="currentPage() === totalPages() - 1">Next</button>
+    </section>
+  }
+</div>
